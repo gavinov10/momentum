@@ -5,7 +5,7 @@ from sqlalchemy import pool # controls how SQLAlchemy manages database connectio
 
 from alembic import context # 
 
-from app.db.models import Base
+from backend.app.db.models import Base
 
 import os
 from dotenv import load_dotenv
