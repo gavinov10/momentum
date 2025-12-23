@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 import enum
+from sqlalchemy import Boolean
 
 from app.db.database import Base
 
@@ -13,6 +14,10 @@ class User(Base):           # This allows user to inherit from Base = becomes a 
     email = Column(String, unique=True, index=True, nullable=False) #unique_email
     created_at = Column(DateTime, default=datetime.now(timezone.utc)) # auto-set on creation
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)) #auto-update
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_superuser = Column(Boolean, default=False, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
 
     #relationship to Applications
     applications = relationship("Application", back_populates="user")

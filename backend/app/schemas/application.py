@@ -4,7 +4,6 @@ from typing import Optional
 from app.db.models import ApplicationStatus
 
 class ApplicationCreate(BaseModel):
-    user_id: int
     company_name: str
     role: str
     company_size: Optional[str] = None
