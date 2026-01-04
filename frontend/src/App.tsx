@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from './services/api';
 import { useAuthStore } from './stores/authStore';
 import { Login } from './components/Login';
@@ -12,6 +12,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [appLoading, setAppLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [editingApplication, setEditingApplication] = useState<Application | null>(null);
 
   // Load user data on mount if token exists
   useEffect(() => {
@@ -41,10 +42,43 @@ function App() {
     }
   };
 
-  const handleApplicationCreated = (newApplication: Application) => {
-    // Add new application to the list
-    setApplications([...applications, newApplication]);
+  const handleApplicationCreated = (application: Application) => {
+    if (editingApplication) {
+      // Update existing application in the list
+      setApplications(applications.map(app => 
+        app.id === application.id ? application : app
+      ));
+      setEditingApplication(null);
+    } else {
+      // Add new application to the list
+      setApplications([...applications, application]);
+    }
     setShowForm(false);
+  };
+
+  const handleEdit = (application: Application) => {
+    setEditingApplication(application);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this application?')) {
+      return;
+    }
+
+    try {
+      await api.deleteApplication(id);
+      // Remove from list
+      setApplications(applications.filter(app => app.id !== id));
+    } catch (error) {
+      console.error("Failed to delete application:", error);
+      alert(error instanceof Error ? error.message : 'Failed to delete application');
+    }
+  };
+
+  const handleCancelForm = () => {
+    setShowForm(false);
+    setEditingApplication(null);
   };
 
   // Show login screen if not authenticated
@@ -93,7 +127,10 @@ function App() {
           <div className="section-header">
             <h2>Your Applications</h2>
             <button 
-              onClick={() => setShowForm(!showForm)} 
+              onClick={() => {
+                setEditingApplication(null);
+                setShowForm(!showForm);
+              }} 
               className="add-button"
             >
               {showForm ? 'Cancel' : '+ Add Application'}
@@ -103,8 +140,9 @@ function App() {
           {showForm && (
             <div className="form-container">
               <ApplicationForm 
+                application={editingApplication || undefined}
                 onSuccess={handleApplicationCreated}
-                onCancel={() => setShowForm(false)}
+                onCancel={handleCancelForm}
               />
             </div>
           )}
@@ -119,7 +157,25 @@ function App() {
             <div className="applications-grid">
               {applications.map((app) => (
                 <div key={app.id} className="application-card">
-                  <h3>{app.company_name}</h3>
+                  <div className="card-header">
+                    <h3>{app.company_name}</h3>
+                    <div className="card-actions">
+                      <button 
+                        onClick={() => handleEdit(app)}
+                        className="edit-button"
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(app.id)}
+                        className="delete-button"
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
                   <p className="role">{app.role}</p>
                   <span className={`status status-${app.status?.toLowerCase()}`}>
                     {app.status}

@@ -6,13 +6,29 @@ import type { CreateApplication, Application } from '../services/api';
 interface ApplicationFormProps {
     onSuccess: (application: Application) => void;
     onCancel?: () => void;
+    application?: Application; // NEW: Optional application for editing
 }
 
 type ApplicationFormData = CreateApplication;
 
-export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onCancel }) => {
+export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onCancel, application }) => {
+    // Convert date from ISO format to YYYY-MM-DD for date input
+    const formatDateForInput = (dateString?: string): string => {
+        if (!dateString) return '';
+        // If it's in ISO format (YYYY-MM-DDTHH:mm:ss), extract just the date part
+        return dateString.split('T')[0];
+    };
+
     const { register, handleSubmit, formState: { errors }, reset } = useForm<ApplicationFormData>({
-        defaultValues: {
+        defaultValues: application ? {
+            company_name: application.company_name,
+            role: application.role,
+            status: application.status || 'saved',
+            company_size: application.company_size || '',
+            job_url: application.job_url || '',
+            date_applied: formatDateForInput(application.date_applied),
+            notes: application.notes || '',
+        } : {
             status: 'saved',
         },
     });
@@ -41,14 +57,21 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onC
             }
             if (data.date_applied) {
                 // Convert date string (YYYY-MM-DD) to ISO datetime format
-                // Add time component to make it a valid datetime
                 cleanedData.date_applied = `${data.date_applied}T00:00:00`;
             }
             if (data.notes?.trim()) {
                 cleanedData.notes = data.notes.trim();
             }
             
-            const newApplication = await api.createApplication(cleanedData);
+            let newApplication: Application;
+            if (application) {
+                // Update existing application
+                newApplication = await api.updateApplication(application.id, cleanedData);
+            } else {
+                // Create new application
+                newApplication = await api.createApplication(cleanedData);
+            }
+            
             onSuccess(newApplication);
             reset(); // Clear form after success
             if (onCancel) {
@@ -72,8 +95,9 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onC
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="application-form">
-            <h3>Add New Application</h3>
+            <h3>{application ? 'Edit Application' : 'Add New Application'}</h3>
 
+            {/* Rest of your form fields stay the same */}
             <div className="form-group">
                 <label htmlFor="company_name">Company Name *</label>
                 <input
@@ -191,7 +215,10 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onC
                     className="submit-button"
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? 'Creating...' : 'Add Application'}
+                    {isSubmitting 
+                        ? (application ? 'Updating...' : 'Creating...') 
+                        : (application ? 'Update Application' : 'Add Application')
+                    }
                 </button>
             </div>
         </form>

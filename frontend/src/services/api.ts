@@ -119,7 +119,7 @@ export const authApi = {
                 // Token expired or invalid, clear it
                 localStorage.removeItem('access_token');
                 throw new Error('Session expired. Please login again.');
-            }
+}
             const error = await response.json();
             throw new Error(error.detail || 'Failed to get user');
         }
@@ -186,6 +186,96 @@ export const api = {
             }
             
             throw new Error(errorMessage);
+        }
+        
+        return response.json();
+    },
+
+    // Get single application (requires token)
+    getApplication: async (id: number): Promise<Application> => {
+        const response = await fetch(`${API_BASE_URL}/applications/${id}`, {
+            method: 'GET',
+            headers: getAuthHeaders(),
+        });
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('access_token');
+                throw new Error('Session expired. Please login again.');
+            }
+            if (response.status === 404) {
+                throw new Error('Application not found');
+            }
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to load application');
+        }
+        
+        return response.json();
+    },
+
+    // Update application (requires token)
+    updateApplication: async (id: number, application: Partial<CreateApplication>): Promise<Application> => {
+        // Clean up the data: convert date if provided
+        const cleanedData: any = { ...application };
+        if (cleanedData.date_applied && typeof cleanedData.date_applied === 'string' && cleanedData.date_applied.length === 10) {
+            // Convert date string (YYYY-MM-DD) to ISO datetime format
+            cleanedData.date_applied = `${cleanedData.date_applied}T00:00:00`;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/applications/${id}`, {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(cleanedData),
+        });
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('access_token');
+                throw new Error('Session expired. Please login again.');
+            }
+            if (response.status === 404) {
+                throw new Error('Application not found');
+            }
+            
+            // Handle FastAPI validation errors
+            const errorData = await response.json();
+            let errorMessage = 'Failed to update application';
+            
+            if (errorData.detail) {
+                if (Array.isArray(errorData.detail)) {
+                    errorMessage = errorData.detail
+                        .map((err: any) => `${err.loc?.join('.')}: ${err.msg}`)
+                        .join(', ');
+                } else if (typeof errorData.detail === 'string') {
+                    errorMessage = errorData.detail;
+                } else {
+                    errorMessage = JSON.stringify(errorData.detail);
+                }
+            }
+            
+            throw new Error(errorMessage);
+        }
+        
+        return response.json();
+    },
+
+    // Delete application (requires token)
+    deleteApplication: async (id: number): Promise<void> => {
+        const response = await fetch(`${API_BASE_URL}/applications/${id}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders(),
+        });
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('access_token');
+                throw new Error('Session expired. Please login again.');
+            }
+            if (response.status === 404) {
+                throw new Error('Application not found');
+            }
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to delete application');
         }
         
         return response.json();

@@ -25,3 +25,13 @@ class ApplicationRead(BaseModel):
     last_activity: Optional[datetime] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+# NEW: Update schema (all fields optional)
+class ApplicationUpdate(BaseModel):
+    company_name: Optional[str] = None
+    role: Optional[str] = None
+    company_size: Optional[str] = None
+    date_applied: Optional[datetime] = None
+    job_url: Optional[str] = None
+    notes: Optional[str] = None
+    status: Optional[ApplicationStatus] = None
