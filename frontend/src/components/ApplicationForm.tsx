@@ -24,8 +24,9 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onC
             company_name: application.company_name,
             role: application.role,
             status: application.status || 'saved',
-            company_size: application.company_size || '',
+            location: application.location,
             job_url: application.job_url || '',
+            recruiter: application.recruiter,
             date_applied: formatDateForInput(application.date_applied),
             notes: application.notes || '',
         } : {
@@ -49,8 +50,11 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onC
             };
             
             // Only include optional fields if they have values
-            if (data.company_size?.trim()) {
-                cleanedData.company_size = data.company_size.trim();
+            if (data.location?.trim()) {
+                cleanedData.location = data.location.trim();
+            }
+            if (data.recruiter?.trim()) {
+                cleanedData.recruiter = data.recruiter.trim();
             }
             if (data.job_url?.trim()) {
                 cleanedData.job_url = data.job_url.trim();
@@ -148,12 +152,23 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ onSuccess, onC
             </div>
 
             <div className="form-group">
-                <label htmlFor="company_size">Company Size</label>
+                <label htmlFor="location">Location</label>
                 <input
-                    id="company_size"
+                    id="location"
                     type="text"
-                    {...register('company_size')}
-                    placeholder="e.g., 50-100 employees"
+                    {...register('location')}
+                    placeholder="e.g., San Francisco, CA"
+                    disabled={isSubmitting}
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="recruiter">Recruiter</label>
+                <input
+                    id="recruiter"
+                    type="text"
+                    {...register('recruiter')}
+                    placeholder="e.g., John Doe"
                     disabled={isSubmitting}
                 />
             </div>

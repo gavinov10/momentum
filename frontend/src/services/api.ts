@@ -26,8 +26,9 @@ export interface Application {
     id: number;
     user_id: number;
     company_name: string;
-    company_size?: string;
+    location?:string;
     role: string;
+    recruiter?: string;
     date_applied?: string;
     status?: "saved" | "applied" | "oa" | "interview" | "offer" | "rejected" | "withdrawn";
     job_url?: string;
@@ -40,8 +41,9 @@ export interface Application {
 export interface CreateApplication {
     company_name: string;
     role: string;
-    company_size?: string;
+    location?: string;
     date_applied?: string;
+    recruiter?: string;
     job_url?: string;
     notes?: string;
     status?: "saved" | "applied" | "oa" | "interview" | "offer" | "rejected" | "withdrawn";

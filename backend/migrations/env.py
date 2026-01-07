@@ -17,8 +17,12 @@ config = context.config
 # load the environment variables
 load_dotenv()
 
-# get the database URL from environment
-config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL", "sqlite:///./momentum.db"))
+# get the database URL from environment and convert async to sync for migrations
+database_url = os.getenv("DATABASE_URL", "sqlite:///./momentum.db")
+# Convert async SQLite URL to sync for Alembic migrations
+if database_url.startswith("sqlite+aiosqlite://"):
+    database_url = database_url.replace("sqlite+aiosqlite://", "sqlite://")
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
