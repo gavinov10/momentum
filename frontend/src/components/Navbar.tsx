@@ -15,7 +15,7 @@ export const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-brand">
-          <Link to="/dashboard">🚀 Momentum</Link>
+          <Link to="/dashboard"><span className="brand-m">M</span>omentum</Link>
         </div>
         
         <div className="navbar-links">

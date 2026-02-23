@@ -134,7 +134,6 @@ export const JobTracker: React.FC = () => {
 
       <div className="applications-section">
         <div className="section-header">
-          <h2>Your Applications</h2>
           <div className="header-actions">
             <div className="view-toggle">
               <button
@@ -158,7 +157,7 @@ export const JobTracker: React.FC = () => {
                 className="settings-button"
                 title="Column Settings"
               >
-                ⚙️ Columns
+                Columns
               </button>
             )}
             <button 

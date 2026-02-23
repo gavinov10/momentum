@@ -41,6 +41,14 @@ export const Dashboard: React.FC = () => {
   const rejectionsCount = applications.filter(app => 
     app.status?.toLowerCase() === "rejected"
   ).length;
+  const respondedCount = applications.filter(app =>
+    app.status &&
+    !["saved", "applied"].includes(app.status.toLowerCase())
+  ).length;
+
+  const responseRate = totalApplications > 0
+    ? Math.round((respondedCount / totalApplications) * 100)
+    : 0;
 
   // Get recent activity (sorted by last_activity or updated_at)
   const recentActivity = [...applications]
@@ -70,7 +78,7 @@ export const Dashboard: React.FC = () => {
     <div className="dashboard">
       {/* Welcome Section */}
       <div className="dashboard-header">
-        <h1>Welcome back, {user?.name || user?.email}! 🚀</h1>
+        <h1>Welcome back, {user?.name || user?.email}!</h1>
         <p>Here's your job application overview</p>
       </div>
 
@@ -84,21 +92,13 @@ export const Dashboard: React.FC = () => {
           <h3>Active Applications</h3>
           <p className="stat-number">{activeApplications}</p>
         </div>
-        <div className="stat-card">
-          <h3>Applied</h3>
-          <p className="stat-number">{appliedCount}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Interviews</h3>
-          <p className="stat-number">{interviewedCount}</p>
+        <div className="stat-card"> 
+          <h3>Response Rate</h3>
+          <p className="stat-number">{responseRate}%</p>
         </div>
         <div className="stat-card">
           <h3>Offers</h3>
           <p className="stat-number">{offersCount}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Rejections</h3>
-          <p className="stat-number">{rejectionsCount}</p>
         </div>
       </div>
 
