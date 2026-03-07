@@ -25,14 +25,14 @@
   }
 
   .navbar-brand .brand-m {
-    color: #4a4a4a;
+    color: #094067;
     font-weight: 800;
     font-size: 1.1em;
     letter-spacing: -1px;
   }
   
   .navbar-brand a {
-    color: #4a4a4a;
+    color: #094067;
     text-decoration: none;
     transition: opacity 0.2s;
   }
@@ -53,17 +53,18 @@
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 6px;
-    transition: background-color 0.2s, font-weight 0.2s;
+    transition: background-color 0.2s, color 0.2s, font-weight 0.2s;
   }
   
   .nav-link:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(9, 64, 103, 0.06);
+    color: #094067;
     font-weight: bold;
   }
   
   .nav-link.active {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: #4a4a4a;
+    background-color: rgba(9, 64, 103, 0.12);
+    color: #094067;
     font-weight: bold;
   }
   

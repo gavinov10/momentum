@@ -4,16 +4,17 @@ import { ApplicationForm } from '../components/ApplicationForm';
 import type { Application } from '../services/api';
 
 type ViewMode = 'list' | 'grid';
+type ApplicationScope = 'active' | 'archived';
 
 // Available column options and their mappings to backend statuses
 const KANBAN_COLUMN_OPTIONS = {
-  applied: { label: 'Applied', backendStatus: 'applied' },
-  screen: { label: 'Screen', backendStatus: 'oa' },
-  interviewing: { label: 'Interviewing', backendStatus: 'interview' },
-  offer: { label: 'Offer', backendStatus: 'offer' },
-  withdrawn: { label: 'Withdrawn', backendStatus: 'withdrawn' },
-  rejected: { label: 'Rejected', backendStatus: 'rejected' },
-  accepted: { label: 'Accepted', backendStatus: 'accepted' }, // Note: may need backend support
+  applied: { label: 'APPLIED', backendStatus: 'applied' },
+  screen: { label: 'SCREEN', backendStatus: 'oa' },
+  interviewing: { label: 'INTERVIEWING', backendStatus: 'interview' },
+  offer: { label: 'OFFER', backendStatus: 'offer' },
+  withdrawn: { label: 'WITHDRAWN', backendStatus: 'withdrawn' },
+  rejected: { label: 'REJECTED', backendStatus: 'rejected' },
+  accepted: { label: 'ACCEPTED', backendStatus: 'accepted' }, // Note: may need backend support
 };
 
 type KanbanColumn = keyof typeof KANBAN_COLUMN_OPTIONS;
@@ -25,6 +26,7 @@ export const JobTracker: React.FC = () => {
   const [editingApplication, setEditingApplication] = useState<Application | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showColumnSettings, setShowColumnSettings] = useState(false);
+  const [applicationScope, setApplicationScope] = useState<ApplicationScope>('active');
   
   // Load selected columns from localStorage or use defaults
   const [selectedColumns, setSelectedColumns] = useState<KanbanColumn[]>(() => {
@@ -115,20 +117,119 @@ export const JobTracker: React.FC = () => {
     localStorage.setItem('kanban-columns', JSON.stringify(defaults));
   };
 
+  const isArchived = (app: Application) => {
+    const status = (app.status ?? '').toLowerCase();
+    return status === 'rejected' || status === 'withdrawn';
+  };
+
+  const activeApplications = applications.filter((app) => !isArchived(app));
+  const archivedApplications = applications.filter((app) => isArchived(app));
+  const visibleApplications = applicationScope === 'active' ? activeApplications : archivedApplications;
+  const columnsToShow: KanbanColumn[] =
+    applicationScope === 'archived' ? ['withdrawn', 'rejected'] : selectedColumns;
+
+  const handleExportCsv = () => {
+    if (!visibleApplications.length) {
+      window.alert('No applications to export for this view.');
+      return;
+    }
+
+    const headers = [
+      'ID',
+      'Company',
+      'Role',
+      'Status',
+      'Location',
+      'Recruiter',
+      'Date Applied',
+      'Job URL',
+      'Notes',
+    ];
+
+    const escape = (value: unknown): string => {
+      if (value === null || value === undefined) return '';
+      const str = String(value);
+      if (str.includes('"') || str.includes(',') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const rows = visibleApplications.map((app) => [
+      app.id,
+      app.company_name,
+      app.role,
+      app.status ?? '',
+      app.location ?? '',
+      app.recruiter ?? '',
+      app.date_applied ? new Date(app.date_applied).toISOString().slice(0, 10) : '',
+      app.job_url ?? '',
+      app.notes ?? '',
+    ]);
+
+    const csv = [headers, ...rows].map((row) => row.map(escape).join(',')).join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    const scopeLabel = applicationScope === 'active' ? 'active' : 'archived';
+    const date = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `momentum_applications_${scopeLabel}_${date}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="job-tracker">
-      <div className="stats">
-        <div className="stat-card">
-          <h3>Total Applications</h3>
-          <p className="stat-number">{applications.length}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Active Applications</h3>
-          <p className="stat-number">
-            {applications.filter(app => 
-              app.status && !["rejected", "withdrawn"].includes(app.status.toLowerCase())
-            ).length}
-          </p>
+      <div className="job-tracker-header">
+        <h1 className="job-tracker-title">YOUR JOB TRACKER</h1>
+        <div className="job-tracker-subrow">
+          <div className="job-tracker-left">
+            <div className="job-tracker-count">{visibleApplications.length} total applications</div>
+            <div className="application-scope-toggle" role="tablist" aria-label="Application scope">
+              <button
+                type="button"
+                className={`scope-button ${applicationScope === 'active' ? 'active' : ''}`}
+                onClick={() => {
+                  setApplicationScope('active');
+                  setShowColumnSettings(false);
+                }}
+              >
+                Active
+              </button>
+              <button
+                type="button"
+                className={`scope-button ${applicationScope === 'archived' ? 'active' : ''}`}
+                onClick={() => {
+                  setApplicationScope('archived');
+                  setShowColumnSettings(false);
+                }}
+              >
+                Archived
+              </button>
+            </div>
+          </div>
+          <div className="job-tracker-actions">
+            <button
+              type="button"
+              className="export-button"
+              onClick={handleExportCsv}
+            >
+              Export CSV
+            </button>
+            <button 
+              onClick={() => {
+                setEditingApplication(null);
+                setShowForm(!showForm);
+              }} 
+              className="add-button"
+            >
+              {showForm ? 'Cancel' : '+ Add Application'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -151,59 +252,44 @@ export const JobTracker: React.FC = () => {
                 ⊞ Kanban
               </button>
             </div>
-            {viewMode === 'grid' && (
-              <button
-                onClick={() => setShowColumnSettings(!showColumnSettings)}
-                className="settings-button"
-                title="Column Settings"
-              >
-                Columns
-              </button>
+            {viewMode === 'grid' && applicationScope === 'active' && (
+              <div className="column-actions">
+                <button
+                  onClick={() => setShowColumnSettings(!showColumnSettings)}
+                  className="settings-button"
+                  title="Edit columns"
+                  type="button"
+                >
+                  <span>Columns</span>
+                  <i className="fi fi-rr-pencil column-settings-icon" />
+                </button>
+              </div>
             )}
-            <button 
-              onClick={() => {
-                setEditingApplication(null);
-                setShowForm(!showForm);
-              }} 
-              className="add-button"
-            >
-              {showForm ? 'Cancel' : '+ Add Application'}
-            </button>
           </div>
-        </div>
 
-        {/* Column Settings Panel */}
-        {viewMode === 'grid' && showColumnSettings && (
-          <div className="column-settings-panel">
-            <div className="settings-header">
-              <h3>Select Kanban Columns</h3>
-              <button 
-                onClick={() => setShowColumnSettings(false)}
-                className="close-settings"
-              >
-                ×
-              </button>
+          {/* Column Settings Dropdown */}
+          {viewMode === 'grid' && applicationScope === 'active' && showColumnSettings && (
+            <div className="column-settings-panel">
+              <div className="column-checkboxes">
+                {Object.entries(KANBAN_COLUMN_OPTIONS).map(([key, option]) => (
+                  <label key={key} className="column-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedColumns.includes(key as KanbanColumn)}
+                      onChange={() => handleColumnToggle(key as KanbanColumn)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+              <div className="settings-actions">
+                <button onClick={handleResetColumns} className="reset-button">
+                  Reset to Defaults
+                </button>
+              </div>
             </div>
-            <div className="column-checkboxes">
-              {Object.entries(KANBAN_COLUMN_OPTIONS).map(([key, option]) => (
-                <label key={key} className="column-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedColumns.includes(key as KanbanColumn)}
-                    onChange={() => handleColumnToggle(key as KanbanColumn)}
-                  />
-                  <span>{option.label}</span>
-                </label>
-              ))}
-            </div>
-            <div className="settings-actions">
-              <button onClick={handleResetColumns} className="reset-button">
-                Reset to Defaults
-              </button>
-            </div>
-          </div>
-        )}
-        
+          )}
+        </div>
 
         {showForm && (
           <div className="form-container">
@@ -217,9 +303,13 @@ export const JobTracker: React.FC = () => {
 
         {appLoading ? (
         <div className="loading">Loading applications...</div>
-        ) : applications.length === 0 ? (
+        ) : visibleApplications.length === 0 ? (
         <div className="empty-state">
-            <p>No applications yet. Add your first job application!</p>
+            <p>
+              {applicationScope === 'archived'
+                ? 'No archived applications yet.'
+                : 'No applications yet. Add your first job application!'}
+            </p>
         </div>
         ) : viewMode === 'list' ? (
             // Table List View
@@ -239,7 +329,7 @@ export const JobTracker: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {applications.map((app) => (
+                  {visibleApplications.map((app) => (
                     <tr key={app.id} className="table-row">
                       <td className="company-cell">
                         <strong>{app.company_name}</strong>
@@ -292,14 +382,14 @@ export const JobTracker: React.FC = () => {
                           className="edit-button"
                           title="Edit"
                         >
-                          ✏️
+                          <i className="fi fi-rr-edit" />
                         </button>
                         <button 
                           onClick={() => handleDelete(app.id)}
                           className="delete-button"
                           title="Delete"
                         >
-                          🗑️
+                          <i className="fi fi-rr-trash" />
                         </button>
                       </td>
                     </tr>
@@ -310,12 +400,12 @@ export const JobTracker: React.FC = () => {
         ) : (
             // Kanban Board View
             <div className="kanban-board">
-              {selectedColumns.map((columnKey) => {
+              {columnsToShow.map((columnKey) => {
                 const option = KANBAN_COLUMN_OPTIONS[columnKey];
                 const backendStatus = option.backendStatus;
                 
                 // Filter applications by the backend status
-                const statusApplications = applications.filter(
+                const statusApplications = visibleApplications.filter(
                   app => app.status?.toLowerCase() === backendStatus
                 );
           
@@ -341,14 +431,14 @@ export const JobTracker: React.FC = () => {
                                   className="edit-button"
                                   title="Edit"
                                 >
-                                  ✏️
+                                  <i className="fi fi-rr-edit" />
                                 </button>
                                 <button 
                                   onClick={() => handleDelete(app.id)}
                                   className="delete-button"
                                   title="Delete"
                                 >
-                                  🗑️
+                                  <i className="fi fi-rr-trash" />
                                 </button>
                               </div>
                             </div>
