@@ -11,13 +11,14 @@ import {
 import { ResumePreview } from '../components/ResumeTemplates';
 
 const TEMPLATES: { id: ResumeTemplateId; label: string }[] = [
-  { id: 'professional', label: 'Professional' },
-  { id: 'minimal', label: 'Minimal' },
+  { id: 'compsci1', label: 'Comp. Sci. Template 1' },
+  { id: 'compsci2', label: 'Comp. Sci. Template 2' },
+  { id: 'business', label: 'Business Template' },
 ];
 
 export const ResumeGenerator: React.FC = () => {
   const [data, setData] = useState<ResumeData>(defaultResumeData);
-  const [template, setTemplate] = useState<ResumeTemplateId>('professional');
+  const [template, setTemplate] = useState<ResumeTemplateId>('compsci1');
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const previewRef = useRef<HTMLDivElement>(null);
 

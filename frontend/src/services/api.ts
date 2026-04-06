@@ -49,6 +49,28 @@ export interface CreateApplication {
     status?: "saved" | "applied" | "oa" | "interview" | "offer" | "rejected" | "withdrawn";
 }
 
+/** Single item in FastAPI 422 validation error `detail` array */
+interface FastApiValidationItem {
+    loc?: Array<string | number>;
+    msg?: string;
+}
+
+const formatValidationDetail = (detail: unknown): string => {
+    if (Array.isArray(detail)) {
+        const items = detail as FastApiValidationItem[];
+        return items
+            .map((err) => `${err.loc?.join('.') ?? 'field'}: ${err.msg ?? 'Invalid value'}`)
+            .join(', ');
+    }
+    if (typeof detail === 'string') {
+        return detail;
+    }
+    if (detail && typeof detail === 'object') {
+        return JSON.stringify(detail);
+    }
+    return 'Validation failed';
+};
+
 // ===== TOKEN HELPERS =====
 const getToken = (): string | null => {
     return localStorage.getItem('access_token');
@@ -121,7 +143,7 @@ export const authApi = {
                 // Token expired or invalid, clear it
                 localStorage.removeItem('access_token');
                 throw new Error('Session expired. Please login again.');
-}
+            }
             const error = await response.json();
             throw new Error(error.detail || 'Failed to get user');
         }
@@ -175,21 +197,12 @@ export const api = {
             let errorMessage = 'Failed to create application';
             
             if (errorData.detail) {
-                if (Array.isArray(errorData.detail)) {
-                    // Validation errors come as an array
-                    errorMessage = errorData.detail
-                        .map((err: any) => `${err.loc?.join('.')}: ${err.msg}`)
-                        .join(', ');
-                } else if (typeof errorData.detail === 'string') {
-                    errorMessage = errorData.detail;
-                } else {
-                    errorMessage = JSON.stringify(errorData.detail);
-                }
+                errorMessage = formatValidationDetail(errorData.detail);
             }
-            
+
             throw new Error(errorMessage);
         }
-        
+
         return response.json();
     },
 
@@ -218,7 +231,7 @@ export const api = {
     // Update application (requires token)
     updateApplication: async (id: number, application: Partial<CreateApplication>): Promise<Application> => {
         // Clean up the data: convert date if provided
-        const cleanedData: any = { ...application };
+        const cleanedData: Partial<CreateApplication> = { ...application };
         if (cleanedData.date_applied && typeof cleanedData.date_applied === 'string' && cleanedData.date_applied.length === 10) {
             // Convert date string (YYYY-MM-DD) to ISO datetime format
             cleanedData.date_applied = `${cleanedData.date_applied}T00:00:00`;
@@ -244,20 +257,12 @@ export const api = {
             let errorMessage = 'Failed to update application';
             
             if (errorData.detail) {
-                if (Array.isArray(errorData.detail)) {
-                    errorMessage = errorData.detail
-                        .map((err: any) => `${err.loc?.join('.')}: ${err.msg}`)
-                        .join(', ');
-                } else if (typeof errorData.detail === 'string') {
-                    errorMessage = errorData.detail;
-                } else {
-                    errorMessage = JSON.stringify(errorData.detail);
-                }
+                errorMessage = formatValidationDetail(errorData.detail);
             }
-            
+
             throw new Error(errorMessage);
         }
-        
+
         return response.json();
     },
 

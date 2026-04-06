@@ -33,7 +33,8 @@ export interface ResumeData {
   skills: string[];
 }
 
-export type ResumeTemplateId = 'professional' | 'minimal';
+/** Template keys — labels shown in UI are in `ResumeGenerator.tsx` */
+export type ResumeTemplateId = 'compsci1' | 'compsci2' | 'business';
 
 export const defaultResumeData: ResumeData = {
   name: '',

@@ -1836,30 +1836,78 @@
   color: #444;
 }
 
-/* Minimal template overrides */
-.resume-template-minimal .resume-header {
-  border-bottom: 1px solid #ddd;
+/* Comp. Sci. Template 1 — default look uses shared `.resume-header` / `.resume-name` above */
+.resume-template-compsci1 .resume-bullets li::marker {
+  color: #094067;
 }
 
-.resume-template-minimal .resume-name {
-  font-size: 20px;
-  color: #232946;
+/* Comp. Sci. Template 2 */
+.resume-template-compsci2 .resume-header {
+  border-bottom: none;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  background: linear-gradient(#094067, #094067) 0 100% / 100% 3px no-repeat;
 }
 
-.resume-template-minimal .resume-section-title {
-  font-size: 11px;
-  color: #666;
+.resume-template-compsci2 .resume-name {
+  color: #0f172a;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}
+
+.resume-template-compsci2 .resume-contact {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9.5px;
+}
+
+.resume-template-compsci2 .resume-section-title {
+  color: #0f172a;
+  text-transform: none;
+  border-left: 4px solid #094067;
+  padding-left: 10px;
+}
+
+.resume-template-compsci2 .resume-bullets li::marker {
+  color: #094067;
+}
+
+/* Business */
+.resume-template-business {
+  font-family: "Times New Roman", Times, Georgia, serif;
+}
+
+.resume-template-business .resume-header {
+  border-bottom: 1px solid #1a1a1a;
+  text-align: center;
+}
+
+.resume-template-business .resume-name {
+  color: #1a1a1a;
+  font-size: 24px;
   text-transform: none;
 }
 
-.resume-template-minimal .resume-contact a {
+.resume-template-business .resume-contact {
+  font-size: 10px;
   color: #333;
 }
 
-.minimal-date,
-.minimal-company,
-.minimal-school {
-  color: #666;
+.resume-template-business .resume-contact a {
+  color: #1a1a1a;
+}
+
+.resume-template-business .resume-section-title {
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
+}
+
+.resume-template-business .resume-job-role,
+.resume-template-business .resume-edu-degree {
+  color: #1a1a1a;
 }
 
 /* Print: show only resume content */
