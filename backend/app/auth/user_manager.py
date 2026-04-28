@@ -1,5 +1,7 @@
 from fastapi_users import BaseUserManager
+from fastapi_users.exceptions import UserAlreadyExists
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+from sqlalchemy.exc import IntegrityError
 from typing import Optional, Any
 
 from app.db.models import User
@@ -25,16 +27,15 @@ class UserManager(BaseUserManager[User, int]):
         request: Optional[Any] = None
     ):
         """Override create to handle the safe parameter"""
-        # Hash the password
         user_dict = user_create.model_dump()
         user_dict["hashed_password"] = self.password_helper.hash(user_dict["password"])
         del user_dict["password"]
         
-        # Create user using the database adapter
-        # The safe parameter is ignored for now, but we accept it to avoid errors
-        created_user = await self.user_db.create(user_dict)
+        try:
+            created_user = await self.user_db.create(user_dict)
+        except IntegrityError:
+            raise UserAlreadyExists()
         
-        # Trigger on_after_register if it exists
         if hasattr(self, 'on_after_register'):
             await self.on_after_register(created_user, request)
         

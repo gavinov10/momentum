@@ -28,6 +28,7 @@ class ApplicationStatus(enum.Enum):
     OA = "oa"
     INTERVIEW = "interview"
     OFFER = "offer"
+    ACCEPTED = "accepted"
     REJECTED = "rejected"
     WITHDRAWN = "withdrawn"
 

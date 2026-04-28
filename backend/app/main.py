@@ -2,22 +2,26 @@ from fastapi import FastAPI
 from app.api.applications import router as applications_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.auth.router import router as auth_router
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
-# Add CORS Middleware
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(applications_router, prefix="/applications", tags=["applications"])
-
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 @app.get("/")
 def root():
-    return{"message": "Momentum is running"}
+    return {"message": "Momentum is running"}
