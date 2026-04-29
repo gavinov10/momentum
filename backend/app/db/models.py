@@ -33,6 +33,7 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     is_superuser = Column(Boolean, default=False, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
+    last_gmail_sync = Column(DateTime, nullable=True)
 
     applications = relationship("Application", back_populates="user", lazy="selectin")
     oauth_accounts = relationship("OAuthAccount", back_populates="user", lazy="selectin")
@@ -65,3 +66,4 @@ class Application(Base):
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="applications")
+    gmail_message_id = Column(String, nullable=True, unique=False)

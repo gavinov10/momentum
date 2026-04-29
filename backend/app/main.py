@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.api.applications import router as applications_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.auth.router import router as auth_router
+from app.api.gmail_sync import router as gmail_sync_router
 import os
 from dotenv import load_dotenv
 
@@ -25,3 +26,5 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 @app.get("/")
 def root():
     return {"message": "Momentum is running"}
+
+app.include_router(gmail_sync_router, prefix="/gmail", tags=["gmail"])

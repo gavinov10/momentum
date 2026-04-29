@@ -21,7 +21,12 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
 google_oauth_client = GoogleOAuth2(
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
-    scopes=["openid", "email", "profile"],
+    scopes=[
+        "openid",
+        "email",
+        "profile",
+        "https://www.googleapis.com/auth/gmail.readonly",
+    ],
 )
 
 # 1) User DB dependency
