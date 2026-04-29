@@ -34,7 +34,7 @@ export interface ResumeData {
 }
 
 /** Template keys — labels shown in UI are in `ResumeGenerator.tsx` */
-export type ResumeTemplateId = 'compsci1' | 'compsci2' | 'business';
+export type ResumeTemplateId = "business" | "academic" | "tech";
 
 export const defaultResumeData: ResumeData = {
   name: '',

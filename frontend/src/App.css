@@ -1,5 +1,5 @@
 .job-tracker {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   min-height: 100%;
   padding: 24px;
   box-sizing: border-box;
@@ -58,7 +58,10 @@
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .export-button:hover {
@@ -77,7 +80,9 @@
   color: #555555;
   border-radius: 0;
   outline: none;
-  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease;
 }
 
 .scope-button:active {
@@ -196,7 +201,7 @@
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid #e0e0e0;
 }
@@ -355,18 +360,33 @@
 }
 
 .link-button {
+  appearance: none;
+  -webkit-appearance: none;
   background: none;
   border: none;
+  border-radius: 0;
   color: #667eea;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   font-size: inherit;
   padding: 0;
   font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .link-button:hover {
   color: #764ba2;
+  text-decoration: underline;
+}
+
+.link-button:focus,
+.link-button:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.link-button:focus-visible {
+  text-decoration: underline;
 }
 
 /* Header Styles */
@@ -606,7 +626,7 @@
   background: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   border-left: 4px solid #094067;
 }
@@ -631,7 +651,7 @@
   background: white;
   padding: 24px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 40px;
 }
 
@@ -683,20 +703,34 @@
   transition: width 0.3s ease;
 }
 
-.progress-saved { background-color: #e3f2fd; }
-.progress-applied { background-color: #fff3e0; }
-.progress-oa { background-color: #f3e5f5; }
-.progress-interview { background-color: #e8f5e8; }
-.progress-offer { background-color: #c8e6c9; }
-.progress-rejected { background-color: #ffebee; }
-.progress-withdrawn { background-color: #f5f5f5; }
+.progress-saved {
+  background-color: #e3f2fd;
+}
+.progress-applied {
+  background-color: #fff3e0;
+}
+.progress-oa {
+  background-color: #f3e5f5;
+}
+.progress-interview {
+  background-color: #e8f5e8;
+}
+.progress-offer {
+  background-color: #c8e6c9;
+}
+.progress-rejected {
+  background-color: #ffebee;
+}
+.progress-withdrawn {
+  background-color: #f5f5f5;
+}
 
 /* Recent Activity */
 .recent-activity {
   background: white;
   padding: 24px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .section-header {
@@ -851,7 +885,9 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .application-list-item:hover {
@@ -1092,7 +1128,7 @@
   .table-container {
     overflow-x: scroll;
   }
-  
+
   .applications-table {
     min-width: 1000px;
   }
@@ -1167,7 +1203,9 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   border-left: 4px solid #094067;
   cursor: pointer;
 }
@@ -1382,7 +1420,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .column-checkbox input[type="checkbox"]:checked {
@@ -1434,7 +1474,7 @@
     min-width: 280px;
     max-width: 280px;
   }
-  
+
   .column-checkboxes {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
@@ -1442,7 +1482,7 @@
 
 /* ========== Resume Generator ========== */
 .resume-generator {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   min-height: 100%;
   padding: 24px;
   box-sizing: border-box;
@@ -1973,4 +2013,259 @@
   .resume-actions {
     margin-left: 0;
   }
+}
+
+/* Sync Gmail Button */
+.sync-button {
+  padding: 8px;
+  justify-content: center;
+  background: #f5f5f5;
+  color: #444;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sync-button:hover:not(:disabled) {
+  background: #e0e0e0;
+  border-color: #c5c5c5;
+  color: #111;
+}
+
+.sync-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.sync-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.sync-button.syncing .sync-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Application detail modal ---------- */
+.application-detail-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.application-detail-modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow:
+    0 18px 55px rgba(9, 64, 103, 0.18),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  max-width: min(560px, 100%);
+  width: 100%;
+  max-height: min(90vh, 800px);
+  display: flex;
+  flex-direction: column;
+}
+
+.application-detail-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #e9eef2;
+}
+
+.application-detail-modal__title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #094067;
+}
+
+.application-detail-modal__close {
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.application-detail-modal__close:hover {
+  background: #f4f8fb;
+  color: #094067;
+}
+
+.application-detail-modal__body {
+  padding: 12px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.application-detail-modal__footer {
+  padding: 16px 20px 18px;
+  border-top: 1px solid #e9eef2;
+}
+
+.application-detail-modal__delete {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e25555;
+  background: #fff5f5;
+  color: #c53030;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.application-detail-modal__delete:hover:not(:disabled) {
+  background: #fed7d7;
+}
+
+.application-detail-modal__delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.application-detail-field {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.application-detail-field__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.application-detail-field__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7f8f;
+}
+
+.application-detail-field__edit-btn {
+  border: none;
+  background: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #094067;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  border-radius: 4px;
+  line-height: 0;
+}
+
+.application-detail-field:hover .application-detail-field__edit-btn,
+.application-detail-field--editing .application-detail-field__edit-btn {
+  opacity: 1;
+}
+
+.application-detail-field__edit-btn:hover {
+  background: rgba(9, 64, 103, 0.08);
+}
+
+.application-detail-field__value {
+  color: #1a2b3a;
+  font-size: 0.96rem;
+  word-break: break-word;
+}
+
+.application-detail-field__editor {
+  position: relative;
+}
+
+.application-detail-input,
+.application-detail-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c5d7e3;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.application-detail-input:focus,
+.application-detail-textarea:focus {
+  outline: none;
+  border-color: #094067;
+  box-shadow: 0 0 0 2px rgba(9, 64, 103, 0.12);
+}
+
+.application-detail-job-link {
+  color: #094067;
+  word-break: break-all;
+}
+
+.application-detail-field__saving {
+  font-size: 0.76rem;
+  color: #6b7f8f;
+  margin-top: 4px;
+}
+
+.table-row-clickable {
+  cursor: pointer;
+}
+
+.table-row-clickable:active {
+  background: #f9fbfc;
+}
+
+.kanban-card.kanban-card-clickable {
+  cursor: pointer;
+}
+
+.kanban-card.kanban-card-clickable:hover {
+  box-shadow: 0 4px 16px rgba(9, 64, 103, 0.1);
+}
+
+.kanban-card.kanban-card-clickable:active {
+  transform: scale(0.998);
+}
+
+.kanban-column-drag-over {
+  border: 2px dashed #094067;
+  background: #f0f4f8;
+  border-radius: 8px;
+}
+
+.kanban-card[draggable].kanban-card-clickable {
+  cursor: grab;
+}
+
+.kanban-card[draggable].kanban-card-clickable:active {
+  cursor: grabbing;
+}
+
+.kanban-card.dragging {
+  opacity: 0.5;
 }
